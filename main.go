@@ -69,8 +69,12 @@ func main() {
 			return err
 		}
 
-		// Calculate output path
+		// Calculate output path, expanding template variables in the filename
 		relPath, _ := filepath.Rel(srcDir, path)
+		relPath, err = expandString(relPath, ctx)
+		if err != nil {
+			return fmt.Errorf("failed to expand filename %s: %w", relPath, err)
+		}
 		targetPath := filepath.Join(*destDir, relPath)
 		os.MkdirAll(filepath.Dir(targetPath), 0755)
 
@@ -94,6 +98,18 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Template Error: %v\n", err)
 		os.Exit(1)
 	}
+}
+
+func expandString(s string, ctx map[string]any) (string, error) {
+	tmpl, err := template.New("").Parse(s)
+	if err != nil {
+		return s, err
+	}
+	var buf strings.Builder
+	if err := tmpl.Execute(&buf, ctx); err != nil {
+		return s, err
+	}
+	return buf.String(), nil
 }
 
 // resolveTemplateDir finds the template directory for the given argument.
