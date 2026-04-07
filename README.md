@@ -45,14 +45,16 @@ Custom variables can also be passed as trailing `KEY=VALUE` arguments.
 
 These are always available in every template run — no configuration needed.
 
-| Variable          | Type   | Description                                                                                |
-| ----------------- | ------ | ------------------------------------------------------------------------------------------ |
-| `BG_COLOR`        | string | Hex color (`#RRGGBB`) derived deterministically from the current working directory path    |
-| `FG_COLOR`        | string | Contrasting foreground color (`#000000` or `#ffffff`) calculated from `BG_COLOR` luminance |
-| `IS_GIT_WORKTREE` | bool   | `true` if the repo is a Git worktree; `false` if it's the primary working tree             |
-| `GIT_REL_SOURCE`  | string | Relative path from the current directory to the Git directory (e.g., `../.git`)            |
-| `GIT_ABS_TARGET`  | string | Absolute path to the Git directory (e.g., `/path/to/repo/.git`)                            |
-| `GIT_BRANCH`      | string | Current branch name, or short commit hash in detached HEAD state                           |
+| Variable                            | Type   | Description                                                                                |
+| ----------------------------------- | ------ | ------------------------------------------------------------------------------------------ |
+| `BG_COLOR`                          | string | Hex color (`#RRGGBB`) derived deterministically from the current working directory path    |
+| `FG_COLOR`                          | string | Contrasting foreground color (`#000000` or `#ffffff`) calculated from `BG_COLOR` luminance |
+| `IS_GIT_WORKTREE`                   | bool   | `true` if the repo is a Git worktree; `false` if it's the primary working tree             |
+| `GIT_REL_SOURCE`                    | string | Relative path from the current directory to the Git directory (e.g., `../.git`)            |
+| `GIT_ABS_TARGET`                    | string | Absolute path to the Git directory (e.g., `/path/to/repo/.git`)                            |
+| `GIT_BRANCH`                        | string | Current branch name, or short commit hash in detached HEAD state                           |
+| `GIT_WORKTREE_MAIN_FOLDER_PATH`     | string | Absolute path to the main worktree folder (the one containing `.git`)                      |
+| `GIT_WORKTREE_MAIN_FOLDER_BASENAME` | string | Folder name of the main worktree (e.g., `my-repo`)                                         |
 
 ## Custom Variables
 

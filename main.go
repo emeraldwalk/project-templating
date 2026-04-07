@@ -31,7 +31,7 @@ func main() {
 
 	// 3. Add Built-in "Special" Variables
 	cwd, _ := os.Getwd()
-	isWorktree, relSource, absTarget := getGitMountInfo()
+	isWorktree, relSource, absTarget, mainFolderPath, mainFolderBasename := getGitMountInfo()
 
 	bgColor := "#" + GenerateColorFromPath(cwd)
 	ctx["BG_COLOR"] = bgColor
@@ -40,6 +40,8 @@ func main() {
 	ctx["GIT_REL_SOURCE"] = relSource
 	ctx["GIT_ABS_TARGET"] = absTarget
 	ctx["GIT_BRANCH"] = getGitBranch()
+	ctx["GIT_WORKTREE_MAIN_FOLDER_PATH"] = mainFolderPath
+	ctx["GIT_WORKTREE_MAIN_FOLDER_BASENAME"] = mainFolderBasename
 
 	// 4. Merge JSON Config File (if provided)
 	if *configPath != "" {
@@ -91,10 +93,10 @@ func main() {
 }
 
 // Git Logic
-func getGitMountInfo() (bool, string, string) {
+func getGitMountInfo() (bool, string, string, string, string) {
 	out, err := exec.Command("git", "rev-parse", "--git-common-dir").Output()
 	if err != nil {
-		return false, "", ""
+		return false, "", "", "", ""
 	}
 
 	absTarget, _ := filepath.Abs(strings.TrimSpace(string(out)))
@@ -105,7 +107,17 @@ func getGitMountInfo() (bool, string, string) {
 	isWorktree := !strings.HasSuffix(filepath.ToSlash(absTarget), "/.git") &&
 		filepath.Base(absTarget) != ".git"
 
-	return isWorktree, relSource, absTarget
+	// Find the .git dir within absTarget, then go up one level to get the main worktree folder.
+	// Primary tree: absTarget = /repo/.git         → main folder = /repo
+	// Worktree:     absTarget = /repo/.git/worktrees/foo → main folder = /repo
+	gitDirIndex := strings.Index(filepath.ToSlash(absTarget), "/.git")
+	mainFolderPath := absTarget
+	if gitDirIndex >= 0 {
+		mainFolderPath = absTarget[:gitDirIndex]
+	}
+	mainFolderBasename := filepath.Base(mainFolderPath)
+
+	return isWorktree, relSource, absTarget, mainFolderPath, mainFolderBasename
 }
 
 func getGitBranch() string {
