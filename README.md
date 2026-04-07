@@ -14,17 +14,21 @@ Templates use Go's `text/template` syntax: `{{ .VARIABLE_NAME }}`.
 
 ### Options
 
-| Flag         | Default     | Description                                                |
-| ------------ | ----------- | ---------------------------------------------------------- |
-| `--template` | `templates` | Template directory to process (see resolution rules below) |
-| `--dest`     | `.`         | Destination directory for generated output                 |
-| `--config`   | _(none)_    | Path to a JSON file with additional variables              |
+| Flag              | Default                    | Description                                                      |
+| ----------------- | -------------------------- | ---------------------------------------------------------------- |
+| `--template`      | _(root directory)_         | Template directory name or path to process (see rules below)     |
+| `--template-root` | `<project>/templates/`     | Root directory searched when resolving `--template`              |
+| `--dest`          | `.`                        | Destination directory for generated output                       |
+| `--config`        | _(none)_                   | Path to a JSON file with additional variables                    |
 
 Custom variables can also be passed as trailing `KEY=VALUE` arguments.
 
 #### `--template` resolution
 
-If a relative path is given, the tool first checks `templates/<arg>` under the current directory. If that directory exists, it is used. Otherwise, the argument is resolved relative to the current directory. Absolute paths are used as-is. Omitting the flag defaults to `templates/`.
+1. If `--template` is an absolute path, it is used directly.
+2. If `--template` is a relative path (or name), the tool looks for `<root>/<arg>` where root is `--template-root` if provided, otherwise `<project>/templates/` (derived from the binary's location).
+3. If not found under the root, the argument is resolved relative to cwd.
+4. If `--template` is omitted, the root directory itself is used.
 
 ### Examples
 
@@ -32,11 +36,14 @@ If a relative path is given, the tool first checks `templates/<arg>` under the c
 # Process templates/ and output to current directory
 ./project-cli
 
-# Named template under templates/
+# Named template under <project>/templates/
 ./project-cli --template my-service
 
-# Explicit path outside templates/
-./project-cli --template ./other/path
+# Use a different root to search for templates
+./project-cli --template my-service --template-root /shared/templates
+
+# Explicit path (absolute paths bypass root lookup)
+./project-cli --template /absolute/path/to/template
 
 # Custom destination
 ./project-cli --template my-service --dest ./output
@@ -48,7 +55,7 @@ If a relative path is given, the tool first checks `templates/<arg>` under the c
 ./project-cli APP_NAME=my-service ENV=production
 
 # All combined
-./project-cli --template my-service --dest ./gen --config config.json APP_NAME=myapp ENV=production
+./project-cli --template my-service --template-root /shared/templates --dest ./gen --config config.json APP_NAME=myapp ENV=production
 ```
 
 ## Built-in Variables

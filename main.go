@@ -17,11 +17,12 @@ import (
 func main() {
 	configPath := flag.String("config", "", "Path to a JSON config file for extra variables")
 	templateArg := flag.String("template", "", "Template directory name or path to process")
+	templateRoot := flag.String("template-root", "", "Override the root directory searched for templates (default: <project>/templates)")
 	destDir := flag.String("dest", ".", "Destination directory for generated files")
 	flag.Parse()
 
 	// Resolve --template: check templates/<arg> first, then relative to cwd
-	srcDir := resolveTemplateDir(*templateArg)
+	srcDir := resolveTemplateDir(*templateArg, *templateRoot)
 
 	// 1. Fail-fast: Ensure we are in a Git repo
 	if err := exec.Command("git", "rev-parse", "--is-inside-work-tree").Run(); err != nil {
@@ -101,24 +102,25 @@ func main() {
 // If arg is empty, defaults to <project>/templates/.
 // If a relative path is given, it first checks <project>/templates/<arg>,
 // then falls back to arg relative to cwd. Absolute paths are used as-is.
-func resolveTemplateDir(arg string) string {
-	projectRoot := ""
-	if exe, err := os.Executable(); err == nil {
-		// exe is <project>/bin/<binary> — go up two levels
-		projectRoot = filepath.Dir(filepath.Dir(exe))
+func resolveTemplateDir(arg, templateRoot string) string {
+	root := templateRoot
+	if root == "" {
+		if exe, err := os.Executable(); err == nil {
+			root = filepath.Join(filepath.Dir(filepath.Dir(exe)), "templates")
+		}
 	}
 
 	if arg == "" {
-		if projectRoot != "" {
-			return filepath.Join(projectRoot, "templates")
+		if root != "" {
+			return root
 		}
 		return "templates"
 	}
 	if filepath.IsAbs(arg) {
 		return arg
 	}
-	if projectRoot != "" {
-		candidate := filepath.Join(projectRoot, "templates", arg)
+	if root != "" {
+		candidate := filepath.Join(root, arg)
 		if info, err := os.Stat(candidate); err == nil && info.IsDir() {
 			return candidate
 		}
