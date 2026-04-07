@@ -130,30 +130,32 @@ func resolveTemplateDir(arg, templateRoot string) string {
 
 // Git Logic
 func getGitMountInfo() (bool, string, string, string, string) {
-	out, err := exec.Command("git", "rev-parse", "--git-common-dir").Output()
+	// --git-dir returns .git for primary tree, .git/worktrees/<name> for worktrees
+	gitDirOut, err := exec.Command("git", "rev-parse", "--git-dir").Output()
+	if err != nil {
+		return false, "", "", "", ""
+	}
+	// --git-common-dir always returns the main .git dir regardless of worktree
+	commonDirOut, err := exec.Command("git", "rev-parse", "--git-common-dir").Output()
 	if err != nil {
 		return false, "", "", "", ""
 	}
 
-	absTarget, _ := filepath.Abs(strings.TrimSpace(string(out)))
+	gitDir, _ := filepath.Abs(strings.TrimSpace(string(gitDirOut)))
+	commonDir, _ := filepath.Abs(strings.TrimSpace(string(commonDirOut)))
 	cwd, _ := os.Getwd()
-	relSource, _ := filepath.Rel(cwd, absTarget)
 
-	// If common dir is just ".git", we are in primary tree
-	isWorktree := !strings.HasSuffix(filepath.ToSlash(absTarget), "/.git") &&
-		filepath.Base(absTarget) != ".git"
+	// If git-dir != common-dir, we are in a worktree
+	isWorktree := gitDir != commonDir
 
-	// Find the .git dir within absTarget, then go up one level to get the main worktree folder.
-	// Primary tree: absTarget = /repo/.git         → main folder = /repo
-	// Worktree:     absTarget = /repo/.git/worktrees/foo → main folder = /repo
-	gitDirIndex := strings.Index(filepath.ToSlash(absTarget), "/.git")
-	mainFolderPath := absTarget
-	if gitDirIndex >= 0 {
-		mainFolderPath = absTarget[:gitDirIndex]
-	}
+	relSource, _ := filepath.Rel(cwd, gitDir)
+
+	// Main worktree folder is the parent of the common .git dir
+	// commonDir = /repo/.git → mainFolderPath = /repo
+	mainFolderPath := filepath.Dir(commonDir)
 	mainFolderBasename := filepath.Base(mainFolderPath)
 
-	return isWorktree, relSource, absTarget, mainFolderPath, mainFolderBasename
+	return isWorktree, relSource, gitDir, mainFolderPath, mainFolderBasename
 }
 
 func getGitBranch() string {
