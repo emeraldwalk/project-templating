@@ -1,6 +1,7 @@
 #!/bin/bash
 # project-cli
 APP_NAME="project-cli"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Detect OS and Normalize
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
@@ -18,7 +19,7 @@ case "$ARCH" in
     i386|i686) ARCH="386" ;;
 esac
 
-BINARY="bin/${APP_NAME}-${OS}-${ARCH}"
+BINARY="${SCRIPT_DIR}/bin/${APP_NAME}-${OS}-${ARCH}"
 if [ "$OS" = "windows" ]; then
     BINARY="${BINARY}.exe"
 fi
