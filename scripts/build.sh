@@ -1,5 +1,6 @@
 #!/bin/bash
 # scripts/build.sh
+cd "$(dirname "$0")/.." || exit 1
 APP_NAME="project-cli"
 PLATFORMS=("darwin/amd64" "darwin/arm64" "linux/amd64" "linux/arm64" "windows/amd64")
 
