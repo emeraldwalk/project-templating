@@ -96,18 +96,32 @@ func main() {
 }
 
 // resolveTemplateDir finds the template directory for the given argument.
-// If arg is empty, defaults to "templates". If a relative path is given,
-// it first checks templates/<arg> relative to cwd, then falls back to arg itself.
+// The project root is derived from the binary location: the binary lives in
+// <project>/bin/, so the project root is its parent directory.
+// If arg is empty, defaults to <project>/templates/.
+// If a relative path is given, it first checks <project>/templates/<arg>,
+// then falls back to arg relative to cwd. Absolute paths are used as-is.
 func resolveTemplateDir(arg string) string {
+	projectRoot := ""
+	if exe, err := os.Executable(); err == nil {
+		// exe is <project>/bin/<binary> — go up two levels
+		projectRoot = filepath.Dir(filepath.Dir(exe))
+	}
+
 	if arg == "" {
+		if projectRoot != "" {
+			return filepath.Join(projectRoot, "templates")
+		}
 		return "templates"
 	}
 	if filepath.IsAbs(arg) {
 		return arg
 	}
-	candidate := filepath.Join("templates", arg)
-	if info, err := os.Stat(candidate); err == nil && info.IsDir() {
-		return candidate
+	if projectRoot != "" {
+		candidate := filepath.Join(projectRoot, "templates", arg)
+		if info, err := os.Stat(candidate); err == nil && info.IsDir() {
+			return candidate
+		}
 	}
 	return arg
 }
