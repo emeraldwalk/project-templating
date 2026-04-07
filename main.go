@@ -84,7 +84,11 @@ func main() {
 			return fmt.Errorf("failed to parse %s: %w", path, err)
 		}
 
-		f, err := os.Create(targetPath)
+		info, err := d.Info()
+		if err != nil {
+			return err
+		}
+		f, err := os.OpenFile(targetPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, info.Mode())
 		if err != nil {
 			return err
 		}
