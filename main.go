@@ -16,9 +16,12 @@ import (
 
 func main() {
 	configPath := flag.String("config", "", "Path to a JSON config file for extra variables")
-	srcDir := flag.String("src", "templates", "Source directory containing templates")
+	templateArg := flag.String("template", "", "Template directory name or path to process")
 	destDir := flag.String("dest", ".", "Destination directory for generated files")
 	flag.Parse()
+
+	// Resolve --template: check templates/<arg> first, then relative to cwd
+	srcDir := resolveTemplateDir(*templateArg)
 
 	// 1. Fail-fast: Ensure we are in a Git repo
 	if err := exec.Command("git", "rev-parse", "--is-inside-work-tree").Run(); err != nil {
@@ -60,13 +63,13 @@ func main() {
 	}
 
 	// 6. Process Template Folder
-	err := filepath.WalkDir(*srcDir, func(path string, d fs.DirEntry, err error) error {
+	err := filepath.WalkDir(srcDir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil || d.IsDir() {
 			return err
 		}
 
 		// Calculate output path
-		relPath, _ := filepath.Rel(*srcDir, path)
+		relPath, _ := filepath.Rel(srcDir, path)
 		targetPath := filepath.Join(*destDir, relPath)
 		os.MkdirAll(filepath.Dir(targetPath), 0755)
 
@@ -90,6 +93,23 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Template Error: %v\n", err)
 		os.Exit(1)
 	}
+}
+
+// resolveTemplateDir finds the template directory for the given argument.
+// If arg is empty, defaults to "templates". If a relative path is given,
+// it first checks templates/<arg> relative to cwd, then falls back to arg itself.
+func resolveTemplateDir(arg string) string {
+	if arg == "" {
+		return "templates"
+	}
+	if filepath.IsAbs(arg) {
+		return arg
+	}
+	candidate := filepath.Join("templates", arg)
+	if info, err := os.Stat(candidate); err == nil && info.IsDir() {
+		return candidate
+	}
+	return arg
 }
 
 // Git Logic

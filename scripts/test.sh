@@ -1,5 +1,4 @@
 rm tests/project/*
 
 ./project-cli \
- -src tests/templates \
- -dest tests/project
+ --dest tests/project

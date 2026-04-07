@@ -14,13 +14,17 @@ Templates use Go's `text/template` syntax: `{{ .VARIABLE_NAME }}`.
 
 ### Options
 
-| Flag      | Default     | Description                                   |
-| --------- | ----------- | --------------------------------------------- |
-| `-src`    | `templates` | Source directory containing template files    |
-| `-dest`   | `.`         | Destination directory for generated output    |
-| `-config` | _(none)_    | Path to a JSON file with additional variables |
+| Flag         | Default     | Description                                                |
+| ------------ | ----------- | ---------------------------------------------------------- |
+| `--template` | `templates` | Template directory to process (see resolution rules below) |
+| `--dest`     | `.`         | Destination directory for generated output                 |
+| `--config`   | _(none)_    | Path to a JSON file with additional variables              |
 
 Custom variables can also be passed as trailing `KEY=VALUE` arguments.
+
+#### `--template` resolution
+
+If a relative path is given, the tool first checks `templates/<arg>` under the current directory. If that directory exists, it is used. Otherwise, the argument is resolved relative to the current directory. Absolute paths are used as-is. Omitting the flag defaults to `templates/`.
 
 ### Examples
 
@@ -28,17 +32,23 @@ Custom variables can also be passed as trailing `KEY=VALUE` arguments.
 # Process templates/ and output to current directory
 ./project-cli
 
-# Custom source and destination
-./project-cli -src ./my-templates -dest ./output
+# Named template under templates/
+./project-cli --template my-service
+
+# Explicit path outside templates/
+./project-cli --template ./other/path
+
+# Custom destination
+./project-cli --template my-service --dest ./output
 
 # Load extra variables from a JSON file
-./project-cli -config vars.json
+./project-cli --config vars.json
 
 # Pass variables directly on the command line
 ./project-cli APP_NAME=my-service ENV=production
 
 # All combined
-./project-cli -src templates -dest ./gen -config config.json APP_NAME=myapp ENV=production
+./project-cli --template my-service --dest ./gen --config config.json APP_NAME=myapp ENV=production
 ```
 
 ## Built-in Variables
