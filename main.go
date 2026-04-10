@@ -36,6 +36,7 @@ func main() {
 	// 3. Add Built-in "Special" Variables
 	cwd, _ := os.Getwd()
 	isWorktree, relSource, absTarget, mainFolderPath, mainFolderBasename := getGitMountInfo()
+	workspaceFolder, _ := filepath.Abs(*destDir)
 
 	bgColor := "#" + GenerateColorFromPath(cwd)
 	ctx["BG_COLOR"] = bgColor
@@ -46,6 +47,8 @@ func main() {
 	ctx["GIT_BRANCH"] = getGitBranch()
 	ctx["GIT_WORKTREE_MAIN_FOLDER_PATH"] = mainFolderPath
 	ctx["GIT_WORKTREE_MAIN_FOLDER_BASENAME"] = mainFolderBasename
+	ctx["LOCAL_WORKSPACE_FOLDER"] = workspaceFolder
+	ctx["LOCAL_WORKSPACE_FOLDER_BASENAME"] = filepath.Base(workspaceFolder)
 
 	// 4. Merge JSON Config File (if provided)
 	if *configPath != "" {

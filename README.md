@@ -72,6 +72,8 @@ These are always available in every template run — no configuration needed.
 | `GIT_BRANCH`                        | string | Current branch name, or short commit hash in detached HEAD state                           |
 | `GIT_WORKTREE_MAIN_FOLDER_PATH`     | string | Absolute path to the main worktree folder (the one containing `.git`)                      |
 | `GIT_WORKTREE_MAIN_FOLDER_BASENAME` | string | Folder name of the main worktree (e.g., `my-repo`)                                         |
+| `LOCAL_WORKSPACE_FOLDER`            | string | Absolute path of the destination directory (`--dest`)                                       |
+| `LOCAL_WORKSPACE_FOLDER_BASENAME`   | string | Folder name of the destination directory                                                    |
 
 ## Custom Variables
 
