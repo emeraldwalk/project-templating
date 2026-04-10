@@ -21,10 +21,16 @@ func main() {
 	destDir := flag.String("dest", ".", "Destination directory for generated files")
 	flag.Parse()
 
+	// 1. Fail-fast: --template is required
+	if *templateArg == "" {
+		fmt.Fprintf(os.Stderr, "Error: --template is required.\n")
+		os.Exit(1)
+	}
+
 	// Resolve --template: check templates/<arg> first, then relative to cwd
 	srcDir := resolveTemplateDir(*templateArg, *templateRoot)
 
-	// 1. Fail-fast: Ensure we are in a Git repo
+	// 2. Fail-fast: Ensure we are in a Git repo
 	if err := exec.Command("git", "rev-parse", "--is-inside-work-tree").Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: Current directory is not a git repository.\n")
 		os.Exit(1)
@@ -122,7 +128,6 @@ func expandString(s string, ctx map[string]any) (string, error) {
 // resolveTemplateDir finds the template directory for the given argument.
 // The project root is derived from the binary location: the binary lives in
 // <project>/bin/, so the project root is its parent directory.
-// If arg is empty, defaults to <project>/templates/.
 // If a relative path is given, it first checks <project>/templates/<arg>,
 // then falls back to arg relative to cwd. Absolute paths are used as-is.
 func resolveTemplateDir(arg, templateRoot string) string {
@@ -133,12 +138,6 @@ func resolveTemplateDir(arg, templateRoot string) string {
 		}
 	}
 
-	if arg == "" {
-		if root != "" {
-			return root
-		}
-		return "templates"
-	}
 	if filepath.IsAbs(arg) {
 		return arg
 	}
