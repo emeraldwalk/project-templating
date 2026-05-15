@@ -72,23 +72,57 @@ func main() {
 		}
 	}
 
+	// Build FuncMap; snippet resolves paths relative to the template directory.
+	// Closures in Go capture variables by reference, so funcMap is fully initialized
+	// by the time the snippet function is ever called.
+	var funcMap template.FuncMap
+	funcMap = template.FuncMap{
+		"snippet": func(relPath string) (string, error) {
+			snippetPath := filepath.Join(srcDir, relPath)
+			data, err := os.ReadFile(snippetPath)
+			if err != nil {
+				return "", fmt.Errorf("snippet %q: %w", relPath, err)
+			}
+			tmpl, err := template.New("snippet").Funcs(funcMap).Parse(string(data))
+			if err != nil {
+				return "", fmt.Errorf("snippet %q: %w", relPath, err)
+			}
+			var buf strings.Builder
+			if err := tmpl.Execute(&buf, ctx); err != nil {
+				return "", fmt.Errorf("snippet %q: %w", relPath, err)
+			}
+			return buf.String(), nil
+		},
+	}
+
 	// 6. Process Template Folder
 	err := filepath.WalkDir(srcDir, func(path string, d fs.DirEntry, err error) error {
-		if err != nil || d.IsDir() {
+		if err != nil {
 			return err
+		}
+		// Skip files/dirs starting with "_" — these are snippets/shared partials,
+		// not output files.
+		if strings.HasPrefix(d.Name(), "_") {
+			if d.IsDir() {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if d.IsDir() {
+			return nil
 		}
 
 		// Calculate output path, expanding template variables in the filename
 		relPath, _ := filepath.Rel(srcDir, path)
-		relPath, err = expandString(relPath, ctx)
+		relPath, err = expandString(relPath, ctx, funcMap)
 		if err != nil {
 			return fmt.Errorf("failed to expand filename %s: %w", relPath, err)
 		}
 		targetPath := filepath.Join(*destDir, relPath)
 		os.MkdirAll(filepath.Dir(targetPath), 0755)
 
-		// Parse and Execute
-		tmpl, err := template.ParseFiles(path)
+		// Parse and Execute with funcMap so {{ snippet }} is available
+		tmpl, err := template.New(filepath.Base(path)).Funcs(funcMap).ParseFiles(path)
 		if err != nil {
 			return fmt.Errorf("failed to parse %s: %w", path, err)
 		}
@@ -113,8 +147,8 @@ func main() {
 	}
 }
 
-func expandString(s string, ctx map[string]any) (string, error) {
-	tmpl, err := template.New("").Parse(s)
+func expandString(s string, ctx map[string]any, funcMap template.FuncMap) (string, error) {
+	tmpl, err := template.New("").Funcs(funcMap).Parse(s)
 	if err != nil {
 		return s, err
 	}
