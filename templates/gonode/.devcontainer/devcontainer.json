@@ -22,17 +22,6 @@
   "mounts": [
     {{ snippet "../_shared/mounts.json" }}
 
-    // // Isolated Claude settings per worktree
-    // "source=claude-code-config-${localWorkspaceFolderBasename},target=/home/vscode/.claude,type=volume",
-
-    // // User level .claude.json and CLAUDE.md
-    // "source=${localEnv:HOME}/.claude.json,target=/home/vscode/.claude.json,type=bind,consistency=cached",
-    // "source=${localEnv:HOME}/.claude/CLAUDE.md,target=/home/vscode/.claude/CLAUDE.md,type=bind,consistency=cached",
-
-    // // Skills and .tasks
-    // "source=${localEnv:HOME}/.agents/skills,target=${containerWorkspaceFolder}/.claude/skills,type=bind,consistency=cached,readonly",
-    // "source=${localEnv:HOME}/.tasks/{{.GIT_WORKTREE_MAIN_FOLDER_BASENAME}},target=${containerWorkspaceFolder}/.tasks,type=bind,consistency=cached",
-
     // node_modules per worktree
     "source=node-modules-${localWorkspaceFolderBasename},target=${containerWorkspaceFolder}/node_modules,type=volume",
 

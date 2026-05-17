@@ -1,8 +1,11 @@
 {{ if .IS_GIT_WORKTREE }}// Bind-mount the primary .git directory since we are in a worktree
     "source=${localWorkspaceFolder}/../../{{ .GIT_WORKTREE_MAIN_FOLDER_BASENAME }}/.git,target=${localWorkspaceFolder}/../../{{ .GIT_WORKTREE_MAIN_FOLDER_BASENAME }}/.git,type=bind,consistency=cached",
 
-    {{ end }}// Isolated Claude settings per project
-    "source=claude-code-config-{{ .GIT_WORKTREE_MAIN_FOLDER_BASENAME }},target=/home/vscode/.claude,type=volume",
+    {{ end }}// Isolated Claude settings per worktree
+    "source=claude-code-config-${localWorkspaceFolderBasename},target=/home/vscode/.claude,type=volume",
+
+    // Isolated Claude settings per project (not sure which is better here)
+    // "source=claude-code-config-{{ .GIT_WORKTREE_MAIN_FOLDER_BASENAME }},target=/home/vscode/.claude,type=volume",
 
     // Bind-mount user level .claude.json and CLAUDE.md
     "source=${localEnv:HOME}/.claude.json,target=/home/vscode/.claude.json,type=bind,consistency=cached",
