@@ -45,8 +45,8 @@ cd() { builtin cd "$@" && [ -f .nvmrc ] && nvm use --silent; }
 # Auto-switch to .nvmrc version on shell start
 [ -f .nvmrc ] && nvm use --silent
 
-cls () 
-{ 
+cls ()
+{
     clear && printf '\033[3J'
 }
 
