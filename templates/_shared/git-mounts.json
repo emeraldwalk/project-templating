@@ -1,0 +1,4 @@
+{{ if .IS_GIT_WORKTREE }}// Bind-mount the primary .git directory since we are in a worktree
+    "source=${localWorkspaceFolder}/../../{{ .GIT_WORKTREE_MAIN_FOLDER_BASENAME }}/.git,target=${localWorkspaceFolder}/../../{{ .GIT_WORKTREE_MAIN_FOLDER_BASENAME }}/.git,type=bind,consistency=cached",
+
+    {{ end }}

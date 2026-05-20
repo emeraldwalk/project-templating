@@ -1,0 +1,2 @@
+// Bind-mount skills and .plans
+    "source=${localEnv:HOME}/.agents/skills,target=${containerWorkspaceFolder}/.claude/skills,type=bind,consistency=cached,readonly",
