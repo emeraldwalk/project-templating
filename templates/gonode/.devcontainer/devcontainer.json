@@ -25,8 +25,6 @@
 
     {{ snippet "../_shared/skills-mounts.json" }}
 
-    // "source=${localEnv:HOME}/.plans/{{ .GIT_WORKTREE_MAIN_FOLDER_BASENAME }},target=${containerWorkspaceFolder}/.plans,type=bind,consistency=cached",
-
     // node_modules per worktree
     "source=node-modules-${localWorkspaceFolderBasename},target=${containerWorkspaceFolder}/node_modules,type=volume",
 

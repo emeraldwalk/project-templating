@@ -15,15 +15,6 @@
     {{ snippet "../_shared/git-mounts.json" }}{{ snippet "../_shared/claude-mounts.json" }}
 
     {{ snippet "../_shared/skills-mounts.json" }}
-
-    // "source=${localEnv:HOME}/.plans/{{ .GIT_WORKTREE_MAIN_FOLDER_BASENAME }},target=${containerWorkspaceFolder}/.plans,type=bind,consistency=cached",
-
-    // node_modules per worktree
-    "source=node-modules-${localWorkspaceFolderBasename},target=${containerWorkspaceFolder}/node_modules,type=volume",
-
-    // Go module and build cache
-    "source=go-cache-{{.GIT_WORKTREE_MAIN_FOLDER_BASENAME}},target=/home/vscode/go/pkg,type=volume",
-    "source=go-build-cache-{{.GIT_WORKTREE_MAIN_FOLDER_BASENAME}},target=/root/.cache/go-build,type=volume"
   ],
   "customizations": {
     "vscode": {
