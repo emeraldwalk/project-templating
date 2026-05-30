@@ -19,6 +19,8 @@
     "PROJECT_PATH": "${containerWorkspaceFolder}",
     "TZ": "America/Chicago"
   },
+  "initializeCommand": ".devcontainer/initializeCommand.sh",
+  "postCreateCommand": ".devcontainer/postCreateCommand.sh",
   "mounts": [
     {{ snippet "../_shared/git-mounts.json" }}{{ snippet "../_shared/claude-mounts.json" }}
 
@@ -33,8 +35,6 @@
     "source=go-cache-{{.GIT_WORKTREE_MAIN_FOLDER_BASENAME}},target=/home/vscode/go/pkg,type=volume",
     "source=go-build-cache-{{.GIT_WORKTREE_MAIN_FOLDER_BASENAME}},target=/root/.cache/go-build,type=volume"
   ],
-  "initializeCommand": ".devcontainer/initializeCommand.sh",
-  "postCreateCommand": ".devcontainer/postCreateCommand.sh",
   "customizations": {
     "vscode": {
       "extensions": [
