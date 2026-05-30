@@ -29,7 +29,7 @@ sudo chown -R vscode:vscode /home/vscode/.claude
 
 curl -fsSL https://claude.ai/install.sh | bash
 
-curl -fsSL https://gh.io/copilot-install | bash
+# curl -fsSL https://gh.io/copilot-install | bash
 
 
 # Setup bash
@@ -48,11 +48,6 @@ cd() { builtin cd "$@" && [ -f .nvmrc ] && nvm use --silent; }
 cls ()
 {
     clear && printf '\033[3J'
-}
-
-run_task_loop()
-{
-    $PROJECT_PATH/.claude/skills/task-tracking/scripts/run_task_loop.sh "$@";
 }
 
 # Custom prompt - hybrid of local + container features

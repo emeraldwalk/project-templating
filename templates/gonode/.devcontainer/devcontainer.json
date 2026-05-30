@@ -19,7 +19,7 @@
     "PROJECT_PATH": "${containerWorkspaceFolder}",
     "TZ": "America/Chicago"
   },
-  "postCreateCommand": ".devcontainer/postCreateCommand.sh",
+  "postCreateCommand": "bash .devcontainer/postCreateCommand.sh",
   "mounts": [
     {{ snippet "../_shared/git-mounts.json" }}{{ snippet "../_shared/claude-mounts.json" }}
 

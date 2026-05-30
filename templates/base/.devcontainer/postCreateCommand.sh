@@ -3,33 +3,13 @@ set -e
 
 cd "$(dirname "$0")/.."
 
-# Setup Node + nvm
-
-sudo chown -R vscode:vscode $PROJECT_PATH/node_modules
-
-# Install the Node version specified in .nvmrc
-export NVM_DIR="/usr/local/share/nvm"
-# shellcheck source=/dev/null
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-if [ -f .nvmrc ]; then
-    nvm install
-fi
-
-
-# Install Playwright browser binaries + native system dependencies
-# Must run after Node is available; browsers are stored in the container layer
-if [ -f package.json ]; then
-    npm install
-    npx playwright install --with-deps
-fi
-
 
 # Setup agents
 sudo chown -R vscode:vscode /home/vscode/.claude
 
 curl -fsSL https://claude.ai/install.sh | bash
 
-curl -fsSL https://gh.io/copilot-install | bash
+# curl -fsSL https://gh.io/copilot-install | bash
 
 
 # Setup bash
@@ -37,22 +17,9 @@ curl -fsSL https://gh.io/copilot-install | bash
 # Setup custom prompt - hybrid of local + container features
 cat >> ~/.bashrc << 'EOF'
 
-# Automatically use the correct Node version when entering the project
-export NVM_DIR="/usr/local/share/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-cd() { builtin cd "$@" && [ -f .nvmrc ] && nvm use --silent; }
-
-# Auto-switch to .nvmrc version on shell start
-[ -f .nvmrc ] && nvm use --silent
-
 cls ()
 {
     clear && printf '\033[3J'
-}
-
-run_task_loop()
-{
-    $PROJECT_PATH/.claude/skills/task-tracking/scripts/run_task_loop.sh "$@";
 }
 
 # Custom prompt - hybrid of local + container features
