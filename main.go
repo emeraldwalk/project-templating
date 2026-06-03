@@ -44,9 +44,6 @@ func main() {
 	isWorktree, relSource, absTarget, mainFolderPath, mainFolderBasename := getGitMountInfo()
 	workspaceFolder, _ := filepath.Abs(*destDir)
 
-	bgColor := "#" + GenerateColorFromPath(cwd)
-	ctx["BG_COLOR"] = bgColor
-	ctx["FG_COLOR"] = GetContrastingForeground(bgColor)
 	ctx["IS_GIT_WORKTREE"] = isWorktree
 	ctx["GIT_REL_SOURCE"] = relSource
 	ctx["GIT_ABS_TARGET"] = absTarget
@@ -70,6 +67,14 @@ func main() {
 		if len(parts) == 2 {
 			ctx[parts[0]] = parts[1]
 		}
+	}
+
+	// 6. Generate colors only if not explicitly provided
+	if _, ok := ctx["BG_COLOR"]; !ok {
+		ctx["BG_COLOR"] = "#" + GenerateColorFromPath(cwd)
+	}
+	if _, ok := ctx["FG_COLOR"]; !ok {
+		ctx["FG_COLOR"] = GetContrastingForeground(ctx["BG_COLOR"].(string))
 	}
 
 	// Build FuncMap; snippet resolves paths relative to the template directory.
