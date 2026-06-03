@@ -69,11 +69,11 @@ func main() {
 		}
 	}
 
-	// 6. Generate colors only if not explicitly provided
-	if _, ok := ctx["BG_COLOR"]; !ok {
+	// 6. Generate colors only if not explicitly provided (empty string treated as unset)
+	if v, _ := ctx["BG_COLOR"].(string); v == "" {
 		ctx["BG_COLOR"] = "#" + GenerateColorFromPath(cwd)
 	}
-	if _, ok := ctx["FG_COLOR"]; !ok {
+	if v, _ := ctx["FG_COLOR"].(string); v == "" {
 		ctx["FG_COLOR"] = GetContrastingForeground(ctx["BG_COLOR"].(string))
 	}
 
