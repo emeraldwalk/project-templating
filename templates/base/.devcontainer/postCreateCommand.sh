@@ -3,6 +3,10 @@ set -e
 
 cd "$(dirname "$0")/.."
 
+# Setup tmux
+sudo apt-get update
+sudo apt-get install -y tmux
+
 
 # Setup agents
 sudo chown -R vscode:vscode /home/vscode/.claude

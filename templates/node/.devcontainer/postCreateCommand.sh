@@ -3,6 +3,12 @@ set -e
 
 cd "$(dirname "$0")/.."
 
+
+# Setup tmux
+sudo apt-get update
+sudo apt-get install -y tmux
+
+
 # Setup Node + nvm
 
 sudo chown -R vscode:vscode $PROJECT_PATH/node_modules
