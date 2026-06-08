@@ -5,6 +5,7 @@
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
   "image": "mcr.microsoft.com/devcontainers/base:noble",
   "features": {
+    "ghcr.io/devcontainers-community/features/deno:1": {}
   },
   "remoteEnv": {
     "PROJECT_PATH": "${containerWorkspaceFolder}",
@@ -20,8 +21,7 @@
     "vscode": {
       "extensions": [
         "anthropic.claude-code",
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode"
+        "denoland.vscode-deno"
       ],
 
       "settings": {
@@ -35,8 +35,12 @@
           "/.*/": true
         },
         "chat.tools.terminal.ignoreDefaultAutoApproveRules": true,
+        
+        // Deno settings
+        "deno.enable": true,
+        "deno.lint": true,
+        "editor.defaultFormatter": "denoland.vscode-deno",
 
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true,
         "terminal.integrated.defaultProfile.linux": "bash",
         "workbench.colorCustomizations": {

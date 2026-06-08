@@ -6,11 +6,12 @@
   ],
   "settings": {
     "workbench.colorCustomizations": {
-      "statusBar.background": "{{.BG_COLOR}}",
-      "statusBar.foreground": "{{.FG_COLOR}}",
-      "titleBar.activeBackground": "{{.BG_COLOR}}",
-      "titleBar.activeForeground": "{{.FG_COLOR}}",
-      "titleBar.inactiveBackground": "{{.BG_COLOR}}"
+      "statusBar.background": "{{ .BG_COLOR }}",
+      "statusBar.foreground": "{{ .FG_COLOR }}",
+      "titleBar.activeBackground": "{{ .BG_COLOR }}",
+      "titleBar.activeForeground": "{{ .FG_COLOR }}",
+      "titleBar.inactiveBackground": "{{ .BG_COLOR }}",
+      "titleBar.inactiveForeground": "{{ .FG_COLOR }}"
     }
   }
 }

@@ -54,11 +54,12 @@
         "editor.formatOnSave": true,
         "terminal.integrated.defaultProfile.linux": "bash",
         "workbench.colorCustomizations": {
-          "statusBar.background": "#49e908",
-          "statusBar.foreground": "#000000",
-          "titleBar.activeBackground": "#49e908",
-          "titleBar.activeForeground": "#000000",
-          "titleBar.inactiveBackground": "#3ec606",
+          "statusBar.background": "{{ .BG_COLOR }}",
+          "statusBar.foreground": "{{ .FG_COLOR }}",
+          "titleBar.activeBackground": "{{ .BG_COLOR }}",
+          "titleBar.activeForeground": "{{ .FG_COLOR }}",
+          "titleBar.inactiveBackground": "{{ .BG_COLOR }}",
+          "titleBar.inactiveForeground": "{{ .FG_COLOR }}",
           "chat.requestBorder": "#e21010",
           "statusBarItem.remoteBackground": "#e21010"
         }
