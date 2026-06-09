@@ -13,7 +13,7 @@
   },
   "postCreateCommand": "bash .devcontainer/postCreateCommand.sh",
   "mounts": [
-    {{ snippet "../_shared/git-mounts.json" }}{{ snippet "../_shared/claude-mounts.json" }}
+    {{ snippet "../_shared/claude-mounts.json" }}
 
     {{ snippet "../_shared/skills-mounts.json" }}
   ],
