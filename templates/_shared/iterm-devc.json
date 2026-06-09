@@ -1,0 +1,6 @@
+# Change iTerm2 tab color to green cleanly without empty lines
+if [ -n "$ITERM_SESSION_ID" ] || [ "$TERM_PROGRAM" = "iTerm.app" ] || [ -n "$TMUX" ]; then
+  echo -ne "\033]6;1;bg;red;brightness;46\a"
+  echo -ne "\033]6;1;bg;green;brightness;204\a"
+  echo -ne "\033]6;1;bg;blue;brightness;113\a"
+fi
