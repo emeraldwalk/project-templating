@@ -6,6 +6,7 @@
   ],
   "settings": {
     "workbench.colorCustomizations": {
+      "commandCenter.foreground": "{{ .FG_COLOR }}",
       "statusBar.background": "{{ .BG_COLOR }}",
       "statusBar.foreground": "{{ .FG_COLOR }}",
       "titleBar.activeBackground": "{{ .BG_COLOR }}",
